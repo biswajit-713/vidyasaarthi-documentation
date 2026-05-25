@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#21 Student app — PerformanceReport + StudyNote UI — Vidyasaarthi</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+a { color: #4f46e5; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.topbar {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.topbar a { color: #94a3b8; }
+.topbar a:hover { color: #f1f5f9; text-decoration: none; }
+.topbar .sep { color: #475569; }
+.topbar .current { color: #f1f5f9; font-weight: 600; }
+
+.container {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 24px 80px;
+}
+
+.issue-header {
+    margin-bottom: 32px;
+}
+.issue-id {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    color: white;
+}
+.issue-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+}
+.section h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.section p {
+    color: #334155;
+    margin-bottom: 12px;
+}
+.section p:last-child { margin-bottom: 0; }
+
+.section ul, .section ol {
+    padding-left: 20px;
+    color: #334155;
+}
+.section li { margin-bottom: 6px; }
+.section code {
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: #0f172a;
+}
+
+.checklist { list-style: none; padding-left: 0; }
+.checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f8fafc;
+    color: #334155;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist input[type=checkbox] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    accent-color: #4f46e5;
+    cursor: pointer;
+}
+
+.blocker-list { list-style: none; padding-left: 0; }
+.blocker-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8fafc;
+}
+.blocker-list li:last-child { border-bottom: none; }
+.blocker-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+}
+.blocker-list a { font-weight: 500; color: #4f46e5; }
+
+.none-tag {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+}
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+.nav-btn:hover { background: #f1f5f9; text-decoration: none; color: #1e293b; }
+.nav-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+/* Index styles */
+.index-hero {
+    text-align: center;
+    padding: 48px 0 36px;
+}
+.index-hero h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+.index-hero p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.category-section { margin-bottom: 40px; }
+.category-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    color: white;
+    margin-bottom: 14px;
+}
+.issue-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.issue-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+.issue-card:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border-color: #c7d2fe;
+    text-decoration: none;
+}
+.issue-card .card-id {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+    min-width: 42px;
+    text-align: center;
+}
+.issue-card .card-title {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+}
+.issue-card .card-blockers {
+    margin-left: auto;
+    font-size: 12px;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">Vidyasaarthi Issues</a>
+  <span class="sep">›</span>
+  <span class="current">#21 Student app — PerformanceReport + StudyNote UI</span>
+</div>
+
+<div class="container">
+
+  <div class="issue-header">
+    <div class="issue-id" style="background:#d97706">#21 · Student App</div>
+    <h1>Student app — PerformanceReport + StudyNote UI</h1>
+  </div>
+
+  <div class="section">
+    <h2>What to build</h2>
+    <p>Implement the PerformanceReport and StudyNote screens, plus the notification settings toggle.</p>
+<p><strong>PerformanceReport</strong>: Two sections. AI learning section shows last 5 TimedTest results across Topics with a Topic drill-down (up to 10 results per Topic) and the AI-generated narrative. Class Tests section shows ScheduledTest results as raw scores only with no narrative.</p>
+<p><strong>StudyNote</strong>: A list of StudyNotes shared with the Student. Tapping a note downloads or opens the PDF. The download uses a signed URL from the backend.</p>
+<p><strong>Settings</strong>: An inactivity reminder notification toggle.</p>
+  </div>
+
+  <div class="section">
+    <h2>Acceptance criteria</h2>
+    <ul class="checklist">
+  <li><input type="checkbox"> <span>PerformanceReport screen has two clearly separated sections: AI learning and Class Tests</span></li>
+  <li><input type="checkbox"> <span>AI learning section shows last 5 TimedTest results per Topic; tapping a Topic shows drill-down of up to 10 results</span></li>
+  <li><input type="checkbox"> <span>AI narrative is displayed within the AI learning section</span></li>
+  <li><input type="checkbox"> <span>Class Tests section shows ScheduledTest scores as raw numbers with no AI commentary</span></li>
+  <li><input type="checkbox"> <span>StudyNote list shows all notes shared with the Student</span></li>
+  <li><input type="checkbox"> <span>Tapping a StudyNote initiates a PDF download via signed URL</span></li>
+  <li><input type="checkbox"> <span>Notification settings screen includes an inactivity reminder toggle that persists to the backend</span></li>
+  <li><input type="checkbox"> <span>Empty states are handled for both PerformanceReport sections and the StudyNote list</span></li>
+</ul>
+  </div>
+
+  <div class="section">
+    <h2>Blocked by</h2>
+    <ul class="blocker-list">
+  <li><span class="blocker-badge" style="background:#d97706">#16</span><a href="16-student-app-scaffold-auth-navigation.html">Student app — scaffold + auth + navigation</a> — Student app scaffold + auth + curriculum navigation</li>
+  <li><span class="blocker-badge" style="background:#059669">#14</span><a href="14-performance-report-backend.html">PerformanceReport backend</a> — PerformanceReport backend</li>
+  <li><span class="blocker-badge" style="background:#059669">#13</span><a href="13-study-note-backend.html">StudyNote backend</a> — StudyNote backend</li>
+  <li><span class="blocker-badge" style="background:#059669">#15</span><a href="15-fcm-push-notifications.html">FCM push notifications</a> — FCM push notifications</li>
+</ul>
+  </div>
+
+  <div class="nav-row">
+    <a class="nav-btn" href="20-student-app-daily-concept-revision-session-ui.html">&#8592; Student app — DailyConcept + RevisionSession UI</a>
+    <a class="nav-btn" href="index.html">&#8617; All issues</a>
+    <a class="nav-btn" href="22-teacher-portal-scaffold-auth.html">TeacherPortal — scaffold + auth &#8594;</a>
+  </div>
+
+</div>
+</body>
+</html>

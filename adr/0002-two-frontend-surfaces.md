@@ -1,0 +1,3 @@
+# Students use React Native; Teachers and Admins use a web portal
+
+The platform has two frontend surfaces sharing one backend API. The React Native app serves Students only — it is optimized for mobile-first, interactive AI sessions. A web portal serves Teachers (posting DailyConcepts, viewing TeacherFlags) and CenterAdmins (enrollment, configuration). We chose this split because Teacher and Admin workflows — posting a concept after class, configuring test settings, reviewing flags — are naturally desktop tasks, and building those flows into a mobile app would add complexity with no UX benefit for those users.

@@ -1,0 +1,3 @@
+# MiniTest questions default to the QuestionBank with a configurable LLM fallback
+
+MiniTest questions are drawn from the pre-generated QuestionBank by default — the same bank used for TimedTests, sampled at the Student's current ProficiencyLevel for the Topic. The question source is abstracted behind a configurable interface so the LLM can be substituted as the source (for freshly generated, session-contextualised questions) without changing the MiniTest flow. We start with the QuestionBank because the MiniTest is a self-check, not a deep assessment — session-specific tailoring adds latency (~3–5s) for marginal benefit at this stage.
