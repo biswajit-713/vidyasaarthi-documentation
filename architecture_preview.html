@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vidyasaarthi — Architecture</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 32px; }
+    h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+    p.subtitle { color: #64748b; margin: 0 0 32px; font-size: 0.95rem; }
+    .diagram-box { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; margin-bottom: 40px; }
+    h2 { font-size: 1.1rem; font-weight: 600; margin: 0 0 20px; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { background: #f1f5f9; text-align: left; padding: 10px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    td:first-child { font-weight: 600; white-space: nowrap; color: #1e40af; }
+    td:nth-child(2) { font-family: monospace; color: #0f172a; }
+    tr:last-child td { border-bottom: none; }
+    .mermaid { display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+  <h1>Vidyasaarthi — System Architecture</h1>
+  <p class="subtitle">AI-powered learning platform for CBSE Classes 8–10 via coaching centers</p>
+
+  <div class="diagram-box">
+    <h2>Component Map</h2>
+    <div class="mermaid">
+flowchart TB
+    subgraph Clients["Client Layer"]
+        SA["📱 Student App\nReact Native / Expo"]
+        TP["🖥️ Teacher Portal\nReact + Vite"]
+    end
+
+    subgraph GCP["GCP Mumbai · asia-south1 · e2-small VM (~₹1,000/month)"]
+        subgraph DockerContainer["Docker Container"]
+            FA["FastAPI\nfastapi-users · SQLAlchemy\nLiteLLM · streaming SSE"]
+        end
+        subgraph NativePostgres["Native (no Docker)"]
+            PG["Postgres 16\n+ pgvector\nHNSW index · 10k–30k vectors"]
+        end
+    end
+
+    subgraph AILayer["AI Layer"]
+        LLM["LiteLLM library\n(direct provider calls)"]
+        CL["Claude\nExplanationSession\nPerformanceReport narrative"]
+        GPT["GPT-4\nfallback / lightweight tasks"]
+        LLM --> CL
+        LLM --> GPT
+    end
+
+    subgraph ExternalServices["External Services"]
+        FCM["Firebase FCM\n4 notification types"]
+        WA["WhatsApp Business API\nTeacherFlag nudge"]
+        GCS["GCS Bucket\nStudyNote PDFs\nDaily pg_dump backups"]
+        GCR["Google Container Registry\ndocker pull on deploy"]
+    end
+
+    subgraph OfflineJobs["Offline Pre-launch Jobs (run once, not on VM)"]
+        IC["NCERTCorpus Ingestion CLI\nPDF → chunks → embeddings → pgvector"]
+        QB["QuestionBank Generation CLI\nNCERT chunks → MCQs → Postgres"]
+    end
+
+    SA -- "HTTPS · REST + streaming SSE" --> FA
+    TP -- "HTTPS · REST" --> FA
+    FA <-- "SQLAlchemy ORM" --> PG
+    FA -- "LiteLLM library\n(no 3rd-party proxy)" --> LLM
+    FA -- "StudyNote upload/download" --> GCS
+    FA -- "inactivity / DailyConcept /\nStudyNote / Flag resolved" --> FCM
+    FA -- "TeacherFlag raised" --> WA
+    FCM -- "push" --> SA
+    IC -- "vectors + metadata" --> PG
+    QB -- "MCQ questions" --> PG
+    PG -- "daily pg_dump" --> GCS
+    GCR -- "docker pull on deploy" --> DockerContainer
+
+    classDef client fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef service fill:#dcfce7,stroke:#22c55e,color:#14532d
+    classDef ai fill:#fef9c3,stroke:#eab308,color:#713f12
+    classDef external fill:#f3e8ff,stroke:#a855f7,color:#3b0764
+    classDef offline fill:#ffedd5,stroke:#f97316,color:#7c2d12
+    classDef db fill:#fee2e2,stroke:#ef4444,color:#7f1d1d
+
+    class SA,TP client
+    class FA service
+    class PG db
+    class LLM,CL,GPT ai
+    class FCM,WA,GCS,GCR external
+    class IC,QB offline
+    </div>
+  </div>
+
+  <div class="diagram-box">
+    <h2>Key Decisions</h2>
+    <table>
+      <thead>
+        <tr><th>Decision</th><th>Choice</th><th>Reason</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Backend</td><td>FastAPI</td><td>Async-native; first-class LLM streaming support via SSE</td></tr>
+        <tr><td>ORM</td><td>SQLAlchemy</td><td>Standard Python ORM; works seamlessly with FastAPI</td></tr>
+        <tr><td>Auth</td><td>fastapi-users</td><td>Mobile number + password / OTP; all roles share one identity</td></tr>
+        <tr><td>LLM abstraction</td><td>LiteLLM (library)</td><td>Direct provider calls; no 3rd-party in student data path (DPDP)</td></tr>
+        <tr><td>Vector store</td><td>pgvector in Postgres</td><td>Corpus is small (10k–30k vectors); no extra service to operate</td></tr>
+        <tr><td>Student frontend</td><td>React Native / Expo</td><td>Mobile-first; interactive AI sessions with streaming</td></tr>
+        <tr><td>Teacher frontend</td><td>React + Vite</td><td>Desktop-optimized teacher/admin workflows</td></tr>
+        <tr><td>Infrastructure</td><td>GCP e2-small VM</td><td>~₹1,000/month; DPDP data residency (Mumbai); migrates to Cloud Run via same Docker image</td></tr>
+        <tr><td>Teacher notifications</td><td>WhatsApp Business API</td><td>Higher open rate than SMS in India; disableable per-center</td></tr>
+        <tr><td>Push notifications</td><td>Firebase FCM</td><td>4 types: DailyConcept, TeacherFlag resolved, StudyNote shared, inactivity reminder</td></tr>
+        <tr><td>Object storage</td><td>GCS</td><td>StudyNote PDFs (≤20MB) + daily DB backups</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis', padding: 20 } });
+  </script>
+</body>
+</html>
