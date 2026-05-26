@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#30 Student activity event log — Vidyasaarthi</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+a { color: #4f46e5; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.topbar {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.topbar a { color: #94a3b8; }
+.topbar a:hover { color: #f1f5f9; text-decoration: none; }
+.topbar .sep { color: #475569; }
+.topbar .current { color: #f1f5f9; font-weight: 600; }
+
+.container {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 24px 80px;
+}
+
+.issue-header {
+    margin-bottom: 32px;
+}
+.issue-id {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    color: white;
+}
+.issue-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+}
+.section h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.section p {
+    color: #334155;
+    margin-bottom: 12px;
+}
+.section p:last-child { margin-bottom: 0; }
+
+.section ul, .section ol {
+    padding-left: 20px;
+    color: #334155;
+}
+.section li { margin-bottom: 6px; }
+.section code {
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: #0f172a;
+}
+
+.checklist { list-style: none; padding-left: 0; }
+.checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f8fafc;
+    color: #334155;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist input[type=checkbox] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    accent-color: #4f46e5;
+    cursor: pointer;
+}
+
+.blocker-list { list-style: none; padding-left: 0; }
+.blocker-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8fafc;
+}
+.blocker-list li:last-child { border-bottom: none; }
+.blocker-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+}
+.blocker-list a { font-weight: 500; color: #4f46e5; }
+
+.none-tag {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+}
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+.nav-btn:hover { background: #f1f5f9; text-decoration: none; color: #1e293b; }
+.nav-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+/* Index styles */
+.index-hero {
+    text-align: center;
+    padding: 48px 0 36px;
+}
+.index-hero h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+.index-hero p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.category-section { margin-bottom: 40px; }
+.category-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    color: white;
+    margin-bottom: 14px;
+}
+.issue-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.issue-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+.issue-card:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border-color: #c7d2fe;
+    text-decoration: none;
+}
+.issue-card .card-id {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+    min-width: 42px;
+    text-align: center;
+}
+.issue-card .card-title {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+}
+.issue-card .card-blockers {
+    margin-left: auto;
+    font-size: 12px;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">Vidyasaarthi Issues</a>
+  <span class="sep">›</span>
+  <span class="current">#30 Student activity event log</span>
+</div>
+
+<div class="container">
+
+  <div class="issue-header">
+    <div class="issue-id" style="background:#7c3aed">#30 · Observability</div>
+    <h1>Student activity event log</h1>
+  </div>
+
+  <div class="section">
+    <h2>What to build</h2>
+    <p>Implement a structured <code>student_activity_event</code> table that records a lightweight event each time a Student takes a meaningful action. This fills a gap in the current data model: RevisionSession and MiniTest write no database records today, leaving those interactions invisible for operational monitoring.</p>
+<p><code>student_activity_event</code> table columns:</p>
+<ul>
+  <li><code>id</code>, <code>created_at</code></li>
+  <li><code>student_id</code></li>
+  <li><code>event_type</code> — Postgres enum (see below)</li>
+  <li><code>topic_id</code> — nullable</li>
+  <li><code>chapter_id</code> — nullable</li>
+  <li><code>metadata</code> — jsonb; event-specific fields listed below</li>
+</ul>
+<p>Event types and their <code>metadata</code> fields:</p>
+<p>| event_type | metadata fields | |---|---| | <code>explanation_session_started</code> | <code>session_id</code> | | <code>explanation_session_closed</code> | <code>session_id</code>, <code>outcome</code> (understood \| teacher_flagged), <code>pass_count</code> | | <code>revision_session_started</code> | — | | <code>mini_test_started</code> | <code>source_session_id</code> | | <code>timed_test_submitted</code> | <code>score_pct</code>, <code>chosen_difficulty</code>, <code>proficiency_level_after</code> | | <code>scheduled_test_submitted</code> | <code>scheduled_test_id</code>, <code>score_pct</code> | | <code>daily_concept_viewed</code> | <code>daily_concept_id</code> | | <code>study_note_downloaded</code> | <code>study_note_id</code> |</p>
+<p><code>ActivityEventLogger</code> is a thin service with a single <code>record(student_id, event_type, topic_id, chapter_id, metadata)</code> method. It is injected as a dependency into each session orchestrator and endpoint handler. Writes are fire-and-forget: the caller does not await the result, so a slow or failed write does not block the primary response path.</p>
+<p>The event log is the data source for the inactivity background job in issue #15 — that job should query <code>student_activity_event</code> for students with no event in the past N days rather than maintaining separate state.</p>
+<p>Three read endpoints, accessible to CenterAdmin (scoped to their CoachingCenter) and PlatformAdmin:</p>
+<ul>
+  <li><code>GET /admin/activity/students/{student_id}</code> — paginated event timeline for a student; filterable by <code>event_type</code> and date range</li>
+  <li><code>GET /admin/activity/center/{center_id}/summary</code> — per-day counts by <code>event_type</code> for the center; shows feature utilization breakdown</li>
+  <li><code>GET /admin/activity/center/{center_id}/low-activity</code> — students in the center with fewer than N events in the past 7 days; N is configurable</li>
+</ul>
+<p>No UI in v1. Endpoints are for direct API access by operators.</p>
+  </div>
+
+  <div class="section">
+    <h2>Acceptance criteria</h2>
+    <ul class="checklist">
+  <li><input type="checkbox"> <span><code>student_activity_event</code> table exists with all specified columns; <code>event_type</code> is a Postgres enum</span></li>
+  <li><input type="checkbox"> <span><code>ActivityEventLogger.record()</code> writes a row for each of the 8 event types from the correct call site in the respective orchestrator or endpoint</span></li>
+  <li><input type="checkbox"> <span><code>explanation_session_started</code> is emitted when <code>POST /sessions/explanation</code> initiates a session</span></li>
+  <li><input type="checkbox"> <span><code>explanation_session_closed</code> is emitted on <code>POST /sessions/explanation/{session_id}/close</code> with correct <code>outcome</code> and <code>pass_count</code> in metadata</span></li>
+  <li><input type="checkbox"> <span><code>revision_session_started</code> is emitted when <code>POST /sessions/revision</code> initiates a session (this is the only record written for RevisionSession)</span></li>
+  <li><input type="checkbox"> <span><code>mini_test_started</code> is emitted when a Student initiates a MiniTest (this is the only record written for MiniTest)</span></li>
+  <li><input type="checkbox"> <span><code>timed_test_submitted</code> is emitted on a successful <code>POST /tests/timed/submit</code> call, after ProficiencyEngine has run; <code>proficiency_level_after</code> reflects the updated level</span></li>
+  <li><input type="checkbox"> <span><code>scheduled_test_submitted</code> is emitted on a successful <code>POST /tests/scheduled/{test_id}/submit</code></span></li>
+  <li><input type="checkbox"> <span><code>daily_concept_viewed</code> is emitted when a Student fetches a DailyConcept detail</span></li>
+  <li><input type="checkbox"> <span><code>study_note_downloaded</code> is emitted when a Student calls the signed-URL download endpoint</span></li>
+  <li><input type="checkbox"> <span>Writes are non-blocking: a failed write is caught, logged to stderr, and does not raise an exception that alters the primary response</span></li>
+  <li><input type="checkbox"> <span><code>GET /admin/activity/students/{student_id}</code> is accessible to PlatformAdmin and CenterAdmin scoped to their center; returns 403 for cross-center access</span></li>
+  <li><input type="checkbox"> <span><code>GET /admin/activity/center/{center_id}/summary</code> returns per-day, per-event_type counts; date range filterable</span></li>
+  <li><input type="checkbox"> <span><code>GET /admin/activity/center/{center_id}/low-activity</code> returns students with fewer than N events in the configurable past-N-days window</span></li>
+  <li><input type="checkbox"> <span><code>ActivityEventLogger</code> is injected as a dependency; unit tests assert correct <code>event_type</code> and <code>metadata</code> shape for each trigger using a mock logger</span></li>
+</ul>
+  </div>
+
+  <div class="section">
+    <h2>Blocked by</h2>
+    <ul class="blocker-list">
+  <li><span class="blocker-badge" style="background:#4f46e5">#1</span><a href="01-local-dev-environment.html">Local dev environment</a> — Local dev environment</li>
+</ul>
+  </div>
+
+  <div class="nav-row">
+    <a class="nav-btn" href="29-llm-token-usage-logging.html">&#8592; LLM token usage logging</a>
+    <a class="nav-btn" href="index.html">&#8617; All issues</a>
+    <span class="nav-btn disabled">Next &#8594;</span>
+  </div>
+
+</div>
+</body>
+</html>

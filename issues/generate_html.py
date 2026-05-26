@@ -8,37 +8,38 @@ ISSUES_DIR = os.path.dirname(os.path.abspath(__file__))
 HTML_DIR = os.path.join(ISSUES_DIR, "html")
 
 # Ordered issue list: (id, filename_stem, short_title, category)
+# IDs match GitHub issue numbers in biswajit-713/vidyasaarthi-documentation
 ISSUES = [
-    ("1a",  "01a-local-dev-environment",                           "Local dev environment",                            "Foundation"),
-    ("1b",  "01b-gcp-production-deployment",                       "GCP production deployment",                        "Foundation"),
-    ("2",   "02-authentication-identity",                          "Authentication & identity",                        "Foundation"),
-    ("3",   "03-curriculum-structure",                             "Curriculum structure",                             "Foundation"),
-    ("4",   "04-coaching-center-enrollment-teacher-assignment",    "CoachingCenter, Enrollment & TeacherAssignment",   "Foundation"),
-    ("5",   "05-ncert-corpus-ingestion-rag-service",               "NCERTCorpus ingestion CLI + RAGService",           "AI Content Infrastructure"),
-    ("6",   "06-question-bank-generation-sampler",                 "QuestionBank generation CLI + QuestionBankSampler","AI Content Infrastructure"),
-    ("7",   "07-explanation-session-backend",                      "ExplanationSession backend",                       "Core Learning Backend"),
-    ("8",   "08-teacher-flag-notification-dispatcher",             "TeacherFlag + NotificationDispatcher",             "Core Learning Backend"),
-    ("9",   "09-mini-test-backend",                                "MiniTest backend",                                 "Core Learning Backend"),
-    ("10",  "10-proficiency-engine-timed-test-backend",            "ProficiencyEngine + TimedTest backend",            "Core Learning Backend"),
-    ("11",  "11-daily-concept-revision-session-backend",           "DailyConcept + RevisionSession backend",           "Core Learning Backend"),
-    ("12a", "12a-scheduled-test-authoring-window-management",      "ScheduledTest authoring & window management",      "Core Learning Backend"),
-    ("12b", "12b-scheduled-test-gatekeeper",                       "ScheduledTestGatekeeper",                          "Core Learning Backend"),
-    ("13",  "13-study-note-backend",                               "StudyNote backend",                                "Core Learning Backend"),
-    ("14",  "14-performance-report-backend",                       "PerformanceReport backend",                        "Core Learning Backend"),
-    ("15",  "15-fcm-push-notifications",                           "FCM push notifications",                           "Core Learning Backend"),
-    ("16",  "16-student-app-scaffold-auth-navigation",             "Student app — scaffold + auth + navigation",       "Student App"),
-    ("17",  "17-student-app-explanation-session-mini-test-ui",     "Student app — ExplanationSession + MiniTest UI",   "Student App"),
-    ("18",  "18-student-app-timed-test-ui",                        "Student app — TimedTest UI",                       "Student App"),
-    ("19",  "19-student-app-scheduled-test-ui",                    "Student app — ScheduledTest UI",                   "Student App"),
-    ("20",  "20-student-app-daily-concept-revision-session-ui",    "Student app — DailyConcept + RevisionSession UI",  "Student App"),
-    ("21",  "21-student-app-performance-report-study-note-ui",     "Student app — PerformanceReport + StudyNote UI",   "Student App"),
-    ("22",  "22-teacher-portal-scaffold-auth",                     "TeacherPortal — scaffold + auth",                  "Teacher Portal"),
-    ("23",  "23-teacher-portal-daily-concept-study-note-ui",       "TeacherPortal — DailyConcept + StudyNote UI",      "Teacher Portal"),
-    ("24",  "24-teacher-portal-scheduled-test-ui",                 "TeacherPortal — ScheduledTest authoring + results","Teacher Portal"),
-    ("25",  "25-teacher-portal-teacher-flag-student-monitoring-ui","TeacherPortal — TeacherFlag + student monitoring", "Teacher Portal"),
-    ("26",  "26-teacher-portal-center-admin-configuration-ui",     "TeacherPortal — CenterAdmin configuration",        "Teacher Portal"),
-    ("27",  "27-llm-token-usage-logging",                         "LLM token usage logging",                          "Observability"),
-    ("28",  "28-student-activity-event-log",                      "Student activity event log",                       "Observability"),
+    ("1",  "01-local-dev-environment",                              "Local dev environment",                            "Foundation"),
+    ("2",  "02-gcp-production-deployment",                          "GCP production deployment",                        "Foundation"),
+    ("3",  "03-authentication-identity",                            "Authentication & identity",                        "Foundation"),
+    ("4",  "04-curriculum-structure",                               "Curriculum structure",                             "Foundation"),
+    ("5",  "05-coaching-center-enrollment-teacher-assignment",      "CoachingCenter, Enrollment & TeacherAssignment",   "Foundation"),
+    ("6",  "06-ncert-corpus-ingestion-rag-service",                 "NCERTCorpus ingestion CLI + RAGService",           "AI Content Infrastructure"),
+    ("7",  "07-question-bank-generation-sampler",                   "QuestionBank generation CLI + QuestionBankSampler","AI Content Infrastructure"),
+    ("8",  "08-explanation-session-backend",                        "ExplanationSession backend",                       "Core Learning Backend"),
+    ("9",  "09-teacher-flag-notification-dispatcher",               "TeacherFlag + NotificationDispatcher",             "Core Learning Backend"),
+    ("10", "10-mini-test-backend",                                  "MiniTest backend",                                 "Core Learning Backend"),
+    ("11", "11-proficiency-engine-timed-test-backend",              "ProficiencyEngine + TimedTest backend",            "Core Learning Backend"),
+    ("12", "12-daily-concept-revision-session-backend",             "DailyConcept + RevisionSession backend",           "Core Learning Backend"),
+    ("13", "13-scheduled-test-authoring-window-management",         "ScheduledTest authoring & window management",      "Core Learning Backend"),
+    ("14", "14-scheduled-test-gatekeeper",                          "ScheduledTestGatekeeper",                          "Core Learning Backend"),
+    ("15", "15-study-note-backend",                                 "StudyNote backend",                                "Core Learning Backend"),
+    ("16", "16-performance-report-backend",                         "PerformanceReport backend",                        "Core Learning Backend"),
+    ("17", "17-fcm-push-notifications",                             "FCM push notifications",                           "Core Learning Backend"),
+    ("18", "18-student-app-scaffold-auth-navigation",               "Student app — scaffold + auth + navigation",       "Student App"),
+    ("19", "19-student-app-explanation-session-mini-test-ui",       "Student app — ExplanationSession + MiniTest UI",   "Student App"),
+    ("20", "20-student-app-timed-test-ui",                          "Student app — TimedTest UI",                       "Student App"),
+    ("21", "21-student-app-scheduled-test-ui",                      "Student app — ScheduledTest UI",                   "Student App"),
+    ("22", "22-student-app-daily-concept-revision-session-ui",      "Student app — DailyConcept + RevisionSession UI",  "Student App"),
+    ("23", "23-student-app-performance-report-study-note-ui",       "Student app — PerformanceReport + StudyNote UI",   "Student App"),
+    ("24", "24-teacher-portal-scaffold-auth",                       "TeacherPortal — scaffold + auth",                  "Teacher Portal"),
+    ("25", "25-teacher-portal-daily-concept-study-note-ui",         "TeacherPortal — DailyConcept + StudyNote UI",      "Teacher Portal"),
+    ("26", "26-teacher-portal-scheduled-test-ui",                   "TeacherPortal — ScheduledTest authoring + results","Teacher Portal"),
+    ("27", "27-teacher-portal-teacher-flag-student-monitoring-ui",  "TeacherPortal — TeacherFlag + student monitoring", "Teacher Portal"),
+    ("28", "28-teacher-portal-center-admin-configuration-ui",       "TeacherPortal — CenterAdmin configuration",        "Teacher Portal"),
+    ("29", "29-llm-token-usage-logging",                            "LLM token usage logging",                          "Observability"),
+    ("30", "30-student-activity-event-log",                         "Student activity event log",                       "Observability"),
 ]
 
 # Map issue id → (filename_stem, short_title)
@@ -416,8 +417,8 @@ def render_blocked_by(text):
 
     parts = ['<ul class="blocker-list">']
     for item in items:
-        # Find issue reference like #1a, #12b, #7 etc.
-        m = re.search(r'#(\w+)', item)
+        # Find issue reference like #7, #13, #24 etc.
+        m = re.search(r'#(\d+)', item)
         if m:
             ref_id = m.group(1)
             if ref_id in ID_MAP:

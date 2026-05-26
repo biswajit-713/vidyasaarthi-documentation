@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#20 Student app — TimedTest UI — Vidyasaarthi</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+a { color: #4f46e5; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.topbar {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.topbar a { color: #94a3b8; }
+.topbar a:hover { color: #f1f5f9; text-decoration: none; }
+.topbar .sep { color: #475569; }
+.topbar .current { color: #f1f5f9; font-weight: 600; }
+
+.container {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 24px 80px;
+}
+
+.issue-header {
+    margin-bottom: 32px;
+}
+.issue-id {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    color: white;
+}
+.issue-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+}
+.section h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.section p {
+    color: #334155;
+    margin-bottom: 12px;
+}
+.section p:last-child { margin-bottom: 0; }
+
+.section ul, .section ol {
+    padding-left: 20px;
+    color: #334155;
+}
+.section li { margin-bottom: 6px; }
+.section code {
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: #0f172a;
+}
+
+.checklist { list-style: none; padding-left: 0; }
+.checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f8fafc;
+    color: #334155;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist input[type=checkbox] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    accent-color: #4f46e5;
+    cursor: pointer;
+}
+
+.blocker-list { list-style: none; padding-left: 0; }
+.blocker-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8fafc;
+}
+.blocker-list li:last-child { border-bottom: none; }
+.blocker-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+}
+.blocker-list a { font-weight: 500; color: #4f46e5; }
+
+.none-tag {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+}
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+.nav-btn:hover { background: #f1f5f9; text-decoration: none; color: #1e293b; }
+.nav-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+/* Index styles */
+.index-hero {
+    text-align: center;
+    padding: 48px 0 36px;
+}
+.index-hero h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+.index-hero p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.category-section { margin-bottom: 40px; }
+.category-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    color: white;
+    margin-bottom: 14px;
+}
+.issue-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.issue-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+.issue-card:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border-color: #c7d2fe;
+    text-decoration: none;
+}
+.issue-card .card-id {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+    min-width: 42px;
+    text-align: center;
+}
+.issue-card .card-title {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+}
+.issue-card .card-blockers {
+    margin-left: auto;
+    font-size: 12px;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">Vidyasaarthi Issues</a>
+  <span class="sep">›</span>
+  <span class="current">#20 Student app — TimedTest UI</span>
+</div>
+
+<div class="container">
+
+  <div class="issue-header">
+    <div class="issue-id" style="background:#d97706">#20 · Student App</div>
+    <h1>Student app — TimedTest UI</h1>
+  </div>
+
+  <div class="section">
+    <h2>What to build</h2>
+    <p>Implement the TimedTest screen in the React Native app.</p>
+<p>Before starting, the Student sees their current ProficiencyLevel for the Topic pre-selected as difficulty; they can override it. On start, questions are fetched and the countdown timer begins. The Student can freely navigate between questions and change answers at any time within the timer window. Answers are held entirely client-side until submission. The Student submits explicitly or the timer triggers auto-submit. If the network is unavailable at submission time, the attempt is discarded with a clear message.</p>
+  </div>
+
+  <div class="section">
+    <h2>Acceptance criteria</h2>
+    <ul class="checklist">
+  <li><input type="checkbox"> <span>Pre-start screen shows current ProficiencyLevel as default difficulty with an override option</span></li>
+  <li><input type="checkbox"> <span>Timer is visible and counting down throughout the test</span></li>
+  <li><input type="checkbox"> <span>Student can navigate freely between questions and change any answer before submission</span></li>
+  <li><input type="checkbox"> <span>Answers are not sent to the server until explicit submit or timer expiry</span></li>
+  <li><input type="checkbox"> <span>Timer expiry triggers automatic submission</span></li>
+  <li><input type="checkbox"> <span>Network failure at submission shows a clear discard message; no partial attempt is recorded</span></li>
+  <li><input type="checkbox"> <span>Post-submit screen shows score and updated ProficiencyLevel</span></li>
+</ul>
+  </div>
+
+  <div class="section">
+    <h2>Blocked by</h2>
+    <ul class="blocker-list">
+  <li><span class="blocker-badge" style="background:#d97706">#18</span><a href="18-student-app-scaffold-auth-navigation.html">Student app — scaffold + auth + navigation</a> — Student app scaffold + auth + curriculum navigation</li>
+  <li><span class="blocker-badge" style="background:#059669">#11</span><a href="11-proficiency-engine-timed-test-backend.html">ProficiencyEngine + TimedTest backend</a> — ProficiencyEngine + TimedTest backend</li>
+</ul>
+  </div>
+
+  <div class="nav-row">
+    <a class="nav-btn" href="19-student-app-explanation-session-mini-test-ui.html">&#8592; Student app — ExplanationSession + MiniTest UI</a>
+    <a class="nav-btn" href="index.html">&#8617; All issues</a>
+    <a class="nav-btn" href="21-student-app-scheduled-test-ui.html">Student app — ScheduledTest UI &#8594;</a>
+  </div>
+
+</div>
+</body>
+</html>
