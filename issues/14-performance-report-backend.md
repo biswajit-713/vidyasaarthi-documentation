@@ -36,3 +36,4 @@ The aggregated signals are passed to the capable-tier LLM to produce a narrative
 
 - #10 ProficiencyEngine + TimedTest backend
 - #12b ScheduledTestGatekeeper
+- #27 LLM token usage logging

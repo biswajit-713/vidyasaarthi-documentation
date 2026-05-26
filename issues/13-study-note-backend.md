@@ -19,3 +19,4 @@ StudyNotes require only a title. An optional Topic or Chapter tag can be attache
 ## Blocked by
 
 - #8 TeacherFlag + NotificationDispatcher
+- #28 Student activity event log

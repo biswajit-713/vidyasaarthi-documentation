@@ -21,3 +21,5 @@ A RevisionSession is a single FirstPrinciples pass on a Topic, grounded in NCERT
 
 - #5 NCERTCorpus ingestion CLI + RAGService
 - #7 ExplanationSession backend
+- #27 LLM token usage logging
+- #28 Student activity event log

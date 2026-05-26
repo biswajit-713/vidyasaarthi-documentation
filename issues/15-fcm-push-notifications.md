@@ -30,3 +30,4 @@ A Student settings endpoint allows toggling the inactivity reminder preference. 
 ## Blocked by
 
 - #8 TeacherFlag + NotificationDispatcher
+- #28 Student activity event log

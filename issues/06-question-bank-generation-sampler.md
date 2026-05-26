@@ -20,3 +20,4 @@ Alongside the script, implement `QuestionBankSampler` as a deep module. The ques
 ## Blocked by
 
 - #5 NCERTCorpus ingestion CLI + RAGService
+- #27 LLM token usage logging

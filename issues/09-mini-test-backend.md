@@ -21,3 +21,5 @@ The Student can ask the AI to explain any individual question further. Each such
 
 - #7 ExplanationSession backend
 - #6 QuestionBank generation CLI + QuestionBankSampler
+- #27 LLM token usage logging
+- #28 Student activity event log

@@ -37,6 +37,8 @@ ISSUES = [
     ("24",  "24-teacher-portal-scheduled-test-ui",                 "TeacherPortal — ScheduledTest authoring + results","Teacher Portal"),
     ("25",  "25-teacher-portal-teacher-flag-student-monitoring-ui","TeacherPortal — TeacherFlag + student monitoring", "Teacher Portal"),
     ("26",  "26-teacher-portal-center-admin-configuration-ui",     "TeacherPortal — CenterAdmin configuration",        "Teacher Portal"),
+    ("27",  "27-llm-token-usage-logging",                         "LLM token usage logging",                          "Observability"),
+    ("28",  "28-student-activity-event-log",                      "Student activity event log",                       "Observability"),
 ]
 
 # Map issue id → (filename_stem, short_title)
@@ -46,6 +48,7 @@ CATEGORY_ORDER = [
     "Foundation",
     "AI Content Infrastructure",
     "Core Learning Backend",
+    "Observability",
     "Student App",
     "Teacher Portal",
 ]
@@ -54,6 +57,7 @@ CATEGORY_COLORS = {
     "Foundation":               "#4f46e5",
     "AI Content Infrastructure":"#0891b2",
     "Core Learning Backend":    "#059669",
+    "Observability":            "#7c3aed",
     "Student App":              "#d97706",
     "Teacher Portal":           "#dc2626",
 }

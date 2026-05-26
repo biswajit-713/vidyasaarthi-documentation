@@ -28,3 +28,4 @@ ScheduledTest scores do not affect ProficiencyLevel.
 ## Blocked by
 
 - #12a ScheduledTest authoring & window management
+- #28 Student activity event log
