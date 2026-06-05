@@ -21,5 +21,6 @@ The Student can ask the AI to explain any individual question further. Each such
 
 - #8 ExplanationSession backend
 - #7 QuestionBank generation CLI + QuestionBankSampler
+- #32 RAGService hybrid retrieval pipeline
 - #29 LLM token usage logging
 - #30 Student activity event log
