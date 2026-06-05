@@ -81,7 +81,7 @@ A pre-generated store of MCQ questions organised by Topic + ProficiencyLevel. Po
 _Avoid_: Question pool, test bank, question store
 
 **NCERTCorpus**:
-The ingested, vectorized text of NCERT textbooks for Classes 8–10. The authoritative source that grounds all AI-generated explanations and test questions. Retrieved via semantic search at query time. Populated by a standalone CLI script run by the engineering team before launch — no admin UI for ingestion in v1. Script is designed to be wrappable in an upload UI in future.
+The ingested text of NCERT textbooks for Classes 8–10. The authoritative source that grounds all AI-generated explanations and test questions. Populated by a standalone CLI script run by the engineering team before launch — no admin UI for ingestion in v1. Script is designed to be wrappable in an upload UI in future.
 _Avoid_: Knowledge base, content library, syllabus
 
 ### People

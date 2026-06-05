@@ -32,7 +32,7 @@ flowchart TB
     end
 
     subgraph OfflineJobs["Offline Pre-launch Jobs (run once, not on VM)"]
-        IC["NCERTCorpus Ingestion CLI\nPDF → chunks → embeddings → pgvector"]
+        IC["NCERTCorpus Ingestion CLI\nPDF → chunks → embeddings → pgvector + bm25s index"]
         QB["QuestionBank Generation CLI\nNCERT chunks → MCQs → Postgres"]
     end
 
