@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#6 NCERTCorpus Ingestion CLI — Vidyasaarthi</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+a { color: #4f46e5; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.topbar {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.topbar a { color: #94a3b8; }
+.topbar a:hover { color: #f1f5f9; text-decoration: none; }
+.topbar .sep { color: #475569; }
+.topbar .current { color: #f1f5f9; font-weight: 600; }
+
+.container {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 24px 80px;
+}
+
+.issue-header {
+    margin-bottom: 32px;
+}
+.issue-id {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    color: white;
+}
+.issue-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+}
+.section h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.section p {
+    color: #334155;
+    margin-bottom: 12px;
+}
+.section p:last-child { margin-bottom: 0; }
+
+.section ul, .section ol {
+    padding-left: 20px;
+    color: #334155;
+}
+.section li { margin-bottom: 6px; }
+.section code {
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: #0f172a;
+}
+
+.checklist { list-style: none; padding-left: 0; }
+.checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f8fafc;
+    color: #334155;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist input[type=checkbox] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    accent-color: #4f46e5;
+    cursor: pointer;
+}
+
+.blocker-list { list-style: none; padding-left: 0; }
+.blocker-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8fafc;
+}
+.blocker-list li:last-child { border-bottom: none; }
+.blocker-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+}
+.blocker-list a { font-weight: 500; color: #4f46e5; }
+
+.none-tag {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+}
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+.nav-btn:hover { background: #f1f5f9; text-decoration: none; color: #1e293b; }
+.nav-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+/* Index styles */
+.index-hero {
+    text-align: center;
+    padding: 48px 0 36px;
+}
+.index-hero h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+.index-hero p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.category-section { margin-bottom: 40px; }
+.category-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    color: white;
+    margin-bottom: 14px;
+}
+.issue-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.issue-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+.issue-card:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border-color: #c7d2fe;
+    text-decoration: none;
+}
+.issue-card .card-id {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+    min-width: 42px;
+    text-align: center;
+}
+.issue-card .card-title {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+}
+.issue-card .card-blockers {
+    margin-left: auto;
+    font-size: 12px;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">Vidyasaarthi Issues</a>
+  <span class="sep">›</span>
+  <span class="current">#6 NCERTCorpus Ingestion CLI</span>
+</div>
+
+<div class="container">
+
+  <div class="issue-header">
+    <div class="issue-id" style="background:#0891b2">#6 · AI Content Infrastructure</div>
+    <h1>NCERTCorpus Ingestion CLI</h1>
+  </div>
+
+  <div class="section">
+    <h2>What to build</h2>
+    <p>A standalone CLI script that ingests NCERT PDF textbooks for Classes 8–10 using structure-aware chunking, generates embeddings, and stores vectors in pgvector. It also builds a bm25s keyword index serialized to disk. Both indexes are consumed by RAGService at runtime.</p>
+<p>A manifest file (JSON) maps each PDF to its <code>class_level</code>, <code>subject</code>, and <code>chapter</code>. The CLI reads the manifest to inject these fields into every chunk — no reliance on PDF metadata or filename conventions.</p>
+<p><strong>Chunk types</strong></p>
+<p>Six chunk types are extracted using font-signature classification:</p>
+<p>| Type | Description | |---|---| | <code>narrative_paragraph</code> | Regular flowing body text | | <code>activity</code> | Starts with bold green header "Activity \<number\>:" | | <code>knowledge_box</code> | Colored box with a known header (e.g. "Think like a scientist", "Our scientific heritage", "Be a scientist", "Ever heard of", "Snapshots", "Discover, design, and debate", "Keep the curiosity alive") | | <code>table_segment</code> | Group header row within a table (spans full width) | | <code>table_row</code> | Single data row; always belongs to a parent <code>table_segment</code>; formatted as "\<segment heading\>. Column1: Value1. Column2: Value2. ..." | | <code>bullet_narrative</code> | Bullet list merged with its introducing paragraph |</p>
+<p>Section headings and sub-section headings set context (<code>section_id</code>, <code>heading</code>) but are not chunks themselves.</p>
+<p><strong>Chunk schema (JSONL output)</strong></p>
+<p>``<code>json { "chunk_id": "ch&lt;chapter&gt;_&lt;sequence&gt;", "chunk_type": "narrative_paragraph | activity | knowledge_box | table_segment | table_row | bullet_narrative", "heading": "...", "section_id": "3.4.1", "class_level": 9, "subject": "Science", "chapter": "Matter in Our Surroundings", "content": "...", "page_number": 42, "is_complete": true, "confidence": 0.95, "flags": [] } </code>``</p>
+<p><strong>Classification rules</strong></p>
+<p>Use font signatures to classify text:</p>
+<ul>
+  <li>Section headings (large bold ~17pt): set <code>section_id</code> and <code>heading</code> context; not a chunk</li>
+  <li>Sub-section headings (bold ~13pt black, matches <code>\d+\.\d+\.\d+</code>): set context; not a chunk</li>
+  <li>Activity headers (bold ~15pt green accent): start an <code>activity</code> chunk</li>
+  <li>Bold green sub-headings (~13pt green, does not match numbered pattern): finalize current chunk; start new <code>narrative_paragraph</code></li>
+  <li>Known knowledge box headers (bold ~13pt black, matches known header list): start a <code>knowledge_box</code> chunk</li>
+  <li>Body text (serif ~12pt): append to current open chunk</li>
+  <li>Bullet markers: reclassify current chunk as <code>bullet_narrative</code></li>
+  <li>Unrecognized bold lines: classify as <code>knowledge_box</code> with <code>confidence &lt; 0.8</code>; add <code>"unrecognized_box_header"</code> to <code>flags</code></li>
+</ul>
+<p><strong>Cross-page continuity</strong></p>
+<p>Maintain <code>last_open_chunk</code> state across pages:</p>
+<ul>
+  <li>First non-noise line on a new page is body/bullet text AND previous page left an open chunk → continuation: inherit <code>chunk_type</code>, <code>heading</code>, <code>section_id</code>; mark previous chunk <code>is_complete: false</code></li>
+  <li>First non-noise line is a structural element → not a continuation; start a new chunk</li>
+</ul>
+<p>Incomplete chunks (<code>is_complete: false</code>) are merged with their continuation before indexing. Only complete chunks are written to pgvector and bm25s.</p>
+<p><strong>Token ceiling</strong></p>
+<p>Maximum 512 tokens per chunk. If a merged chunk exceeds 512 tokens, split at the nearest sentence boundary with 50-token overlap. Both values are configurable constants.</p>
+<p><strong>Confidence and indexing threshold</strong></p>
+<ul>
+  <li>0.95: activities and known box headers</li>
+  <li>0.90: table chunks and recognized sub-headings</li>
+  <li>0.85: body narrative paragraphs</li>
+  <li>0.50–0.79: infographic titles, unrecognized box headers</li>
+</ul>
+<p>Chunks with <code>confidence ≥ 0.8</code> are indexed in pgvector and bm25s. Chunks with <code>confidence &lt; 0.8</code> are excluded from both indexes and written to a skipped-chunks report (JSONL) for human review (see issue #37).</p>
+<p><strong>Table rules</strong></p>
+<ul>
+  <li>Table titles matching <code>Table \d+\.\d+</code> are absorbed into the next <code>table_segment</code>; no chunk created from title lines alone</li>
+  <li>Cross-page table continuity: if previous page ended a table, reuse stored column headers; treat first row on new page as data, not headers</li>
+  <li>If column count differs from stored headers, treat as a new table</li>
+  <li>Skip exercise/data tables where more than half the column headers are pure digits</li>
+</ul>
+<p><strong>Skip rules</strong></p>
+<ul>
+  <li>Decorative bulletin board pages (page 1 of chapters)</li>
+  <li>Header/footer noise: lines matching "Chapter X.indd", "Reprint YYYY", "Chapter X — Title", "Curiosity — Textbook", standalone page numbers</li>
+  <li>Figure/image references</li>
+</ul>
+<p><strong>bm25s index contract</strong></p>
+<p>The serialized bm25s index is written to a path configurable via CLI argument (default: <code>./data/bm25s_index/</code>). RAGService loads from this path at FastAPI startup. The index is rebuilt from scratch on every ingestion run.</p>
+  </div>
+
+  <div class="section">
+    <h2>Acceptance criteria</h2>
+    <ul class="checklist">
+  <li><input type="checkbox"> <span>CLI accepts <code>--pdf-dir</code> (directory of NCERT PDFs) and <code>--manifest</code> (JSON file mapping each PDF to <code>class_level</code>, <code>subject</code>, <code>chapter</code>)</span></li>
+  <li><input type="checkbox"> <span>Structure-aware chunking extracts all 6 chunk types using font-signature classification rules</span></li>
+  <li><input type="checkbox"> <span>Cross-page continuity is maintained; <code>is_complete: false</code> chunks are merged with their continuation before indexing</span></li>
+  <li><input type="checkbox"> <span>Chunks with <code>confidence ≥ 0.8</code> are embedded with <code>bge-large-en-v1.5</code> and upserted into pgvector</span></li>
+  <li><input type="checkbox"> <span>Each vector is stored with metadata: <code>chunk_id</code>, <code>chunk_type</code>, <code>class_level</code>, <code>subject</code>, <code>chapter</code>, <code>section_id</code>, <code>heading</code>, <code>page_number</code></span></li>
+  <li><input type="checkbox"> <span>HNSW index is created on the vector column</span></li>
+  <li><input type="checkbox"> <span>All indexed chunks are added to a bm25s index serialized to the configured path</span></li>
+  <li><input type="checkbox"> <span>Chunks with <code>confidence &lt; 0.8</code> are excluded from both indexes and written to a skipped-chunks report (JSONL) at <code>--report-path</code></span></li>
+  <li><input type="checkbox"> <span>Any chunk with ambiguous classification has its <code>flags</code> array populated and is included in the skipped-chunks report</span></li>
+  <li><input type="checkbox"> <span>Running the CLI twice is idempotent: vectors are upserted by <code>chunk_id</code>; bm25s index is rebuilt from scratch on each run</span></li>
+  <li><input type="checkbox"> <span>Integration test: ingest a fixture PDF with manifest; assert vector count, metadata correctness, and bm25s index is non-empty</span></li>
+</ul>
+  </div>
+
+  <div class="section">
+    <h2>Blocked by</h2>
+    <ul class="blocker-list">
+  <li><span class="blocker-badge" style="background:#4f46e5">#1</span><a href="01-local-dev-environment.html">Local dev environment</a> — Local dev environment</li>
+</ul>
+  </div>
+
+  <div class="nav-row">
+    <a class="nav-btn" href="05-coaching-center-enrollment-teacher-assignment.html">&#8592; CoachingCenter, Enrollment &amp; TeacherAssignment</a>
+    <a class="nav-btn" href="index.html">&#8617; All issues</a>
+    <a class="nav-btn" href="32-ragservice-hybrid-retrieval-pipeline.html">RAGService — hybrid retrieval pipeline &#8594;</a>
+  </div>
+
+</div>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>#5 CoachingCenter, Enrollment &amp; TeacherAssignment — Vidyasaarthi</title>
+  <title>#32 RAGService — hybrid retrieval pipeline — Vidyasaarthi</title>
   <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -246,54 +246,55 @@ a:hover { text-decoration: underline; }
 <div class="topbar">
   <a href="index.html">Vidyasaarthi Issues</a>
   <span class="sep">›</span>
-  <span class="current">#5 CoachingCenter, Enrollment &amp; TeacherAssignment</span>
+  <span class="current">#32 RAGService — hybrid retrieval pipeline</span>
 </div>
 
 <div class="container">
 
   <div class="issue-header">
-    <div class="issue-id" style="background:#4f46e5">#5 · Foundation</div>
-    <h1>CoachingCenter, Enrollment &amp; TeacherAssignment</h1>
+    <div class="issue-id" style="background:#0891b2">#32 · AI Content Infrastructure</div>
+    <h1>RAGService — hybrid retrieval pipeline</h1>
   </div>
 
   <div class="section">
     <h2>What to build</h2>
-    <p>Implement the organizational structure of the platform. PlatformAdmin creates CoachingCenters. CenterAdmin enrolls Students into specific Subjects at their CoachingCenter. CenterAdmin creates TeacherAssignments (Teacher → Subject + Class at a CoachingCenter).</p>
-<p>Also includes CoachingCenter-level configuration toggles:</p>
-<ul>
-  <li>WhatsApp notifications on/off</li>
-  <li>Push notification types on/off (DailyConcept posted, TeacherFlag resolved, StudyNote shared)</li>
-  <li>TimedTest configuration (question count, duration)</li>
-</ul>
+    <p>Implement <code>RAGService</code> as a deep module with a single retrieval interface used by ExplanationSession, RevisionSession, and the QuestionBank generation CLI.</p>
+<p><code>retrieve(query, class_level, subject, top_k=5)</code> executes a 4-stage hybrid pipeline and returns the top-k NCERT passages most relevant to the query.</p>
+<p><strong>Pipeline</strong></p>
+<p>| Stage | Method | Input → Output | |---|---|---| | 1a | BM25 keyword search | query → top-50 matches from bm25s index | | 1b | Semantic search | query embedding (bge-large-en-v1.5) → top-50 ANN matches from pgvector filtered by <code>class_level</code> and <code>subject</code> | | 2 | RRF merge | two lists of 50 → top-20 merged candidates | | 3 | Cross-encoder reranking | bge-reranker-base (plain PyTorch) scores top-20 → top-k passages | | 4 | Return | top-k passages with metadata to caller |</p>
+<p>Stage cardinalities are configurable constants: <code>BM25_TOP_N=50</code>, <code>SEMANTIC_TOP_N=50</code>, <code>RRF_TOP_N=20</code>.</p>
+<p><strong>Model loading</strong></p>
+<p>Both <code>bge-large-en-v1.5</code> (query embedding) and <code>bge-reranker-base</code> (reranking) are loaded once at FastAPI startup. The bm25s index is also loaded from disk at startup. None of these are reloaded per request.</p>
+<p><strong>Connection pool</strong></p>
+<p>RAGService uses the application's existing SQLAlchemy connection pool for all pgvector queries. No new database connection is opened per retrieval call.</p>
   </div>
 
   <div class="section">
     <h2>Acceptance criteria</h2>
     <ul class="checklist">
-  <li><input type="checkbox"> <span>PlatformAdmin can create a CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can enroll a Student into one or more Subjects at their CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can create a TeacherAssignment mapping a Teacher to a Subject + Class</span></li>
-  <li><input type="checkbox"> <span>A Student's enrolled Subjects are retrievable from their profile</span></li>
-  <li><input type="checkbox"> <span>TeacherAssignment determines which TeacherFlags, DailyConcepts, and Students are visible to a Teacher</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set and update WhatsApp notification toggle per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set and update push notification type toggles per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set TimedTest question count and duration per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin actions are scoped to their own CoachingCenter; cross-center access is rejected</span></li>
+  <li><input type="checkbox"> <span><code>RAGService.retrieve(query, class_level, subject, top_k)</code> returns top-k passages filtered by <code>class_level</code> and <code>subject</code></span></li>
+  <li><input type="checkbox"> <span>Stage 1a: BM25 search returns top-50 candidates from the bm25s index loaded at startup</span></li>
+  <li><input type="checkbox"> <span>Stage 1b: semantic search embeds the query with <code>bge-large-en-v1.5</code> and returns top-50 ANN matches from pgvector filtered by <code>class_level</code> and <code>subject</code></span></li>
+  <li><input type="checkbox"> <span>Stage 2: RRF merges both candidate lists and outputs top-20</span></li>
+  <li><input type="checkbox"> <span>Stage 3: <code>bge-reranker-base</code> (plain PyTorch) scores the top-20 candidates and returns top-k</span></li>
+  <li><input type="checkbox"> <span><code>bge-large-en-v1.5</code>, <code>bge-reranker-base</code>, and the bm25s index are loaded once at FastAPI startup; not reloaded per request</span></li>
+  <li><input type="checkbox"> <span>RAGService uses the application's existing SQLAlchemy connection pool — no new connection per retrieval call</span></li>
+  <li><input type="checkbox"> <span><code>BM25_TOP_N</code>, <code>SEMANTIC_TOP_N</code>, and <code>RRF_TOP_N</code> are configurable constants</span></li>
+  <li><input type="checkbox"> <span>Integration tests: fixture vectors seeded into pgvector test instance and bm25s index; assert top-k recall, metadata filter correctness, and RRF output cardinality</span></li>
 </ul>
   </div>
 
   <div class="section">
     <h2>Blocked by</h2>
     <ul class="blocker-list">
-  <li><span class="blocker-badge" style="background:#4f46e5">#3</span><a href="03-authentication-identity.html">Authentication &amp; identity</a> — Authentication &amp; identity</li>
-  <li><span class="blocker-badge" style="background:#4f46e5">#4</span><a href="04-curriculum-structure.html">Curriculum structure</a> — Curriculum structure</li>
+  <li><span class="blocker-badge" style="background:#0891b2">#6</span><a href="06-ncert-corpus-ingestion-cli.html">NCERTCorpus Ingestion CLI</a> — NCERTCorpus ingestion CLI</li>
 </ul>
   </div>
 
   <div class="nav-row">
-    <a class="nav-btn" href="04-curriculum-structure.html">&#8592; Curriculum structure</a>
+    <a class="nav-btn" href="06-ncert-corpus-ingestion-cli.html">&#8592; NCERTCorpus Ingestion CLI</a>
     <a class="nav-btn" href="index.html">&#8617; All issues</a>
-    <a class="nav-btn" href="06-ncert-corpus-ingestion-cli.html">NCERTCorpus Ingestion CLI &#8594;</a>
+    <a class="nav-btn" href="38-low-confidence-chunk-review-reingestion.html">Low-confidence chunk review and re-ingestion &#8594;</a>
   </div>
 
 </div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>#5 CoachingCenter, Enrollment &amp; TeacherAssignment — Vidyasaarthi</title>
+  <title>#36 Anthropic prompt caching for ExplanationSession — Vidyasaarthi</title>
   <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -246,54 +246,42 @@ a:hover { text-decoration: underline; }
 <div class="topbar">
   <a href="index.html">Vidyasaarthi Issues</a>
   <span class="sep">›</span>
-  <span class="current">#5 CoachingCenter, Enrollment &amp; TeacherAssignment</span>
+  <span class="current">#36 Anthropic prompt caching for ExplanationSession</span>
 </div>
 
 <div class="container">
 
   <div class="issue-header">
-    <div class="issue-id" style="background:#4f46e5">#5 · Foundation</div>
-    <h1>CoachingCenter, Enrollment &amp; TeacherAssignment</h1>
+    <div class="issue-id" style="background:#0f766e">#36 · Quality &amp; Optimisation</div>
+    <h1>Anthropic prompt caching for ExplanationSession</h1>
   </div>
 
   <div class="section">
     <h2>What to build</h2>
-    <p>Implement the organizational structure of the platform. PlatformAdmin creates CoachingCenters. CenterAdmin enrolls Students into specific Subjects at their CoachingCenter. CenterAdmin creates TeacherAssignments (Teacher → Subject + Class at a CoachingCenter).</p>
-<p>Also includes CoachingCenter-level configuration toggles:</p>
-<ul>
-  <li>WhatsApp notifications on/off</li>
-  <li>Push notification types on/off (DailyConcept posted, TeacherFlag resolved, StudyNote shared)</li>
-  <li>TimedTest configuration (question count, duration)</li>
-</ul>
+    <p>Enable Anthropic prompt caching for the NCERT context prefix in ExplanationSession LLM calls. The passages retrieved by RAGService for a given Topic are identical across all students. Caching the key-value attention states of this prefix means only the first call for a Topic within the cache TTL window pays full input token cost; subsequent calls pay ~10% for the cached portion.</p>
+<p>This is a cost and latency optimisation — response quality is unaffected. Each student still receives a freshly generated, personalised response.</p>
   </div>
 
   <div class="section">
     <h2>Acceptance criteria</h2>
     <ul class="checklist">
-  <li><input type="checkbox"> <span>PlatformAdmin can create a CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can enroll a Student into one or more Subjects at their CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can create a TeacherAssignment mapping a Teacher to a Subject + Class</span></li>
-  <li><input type="checkbox"> <span>A Student's enrolled Subjects are retrievable from their profile</span></li>
-  <li><input type="checkbox"> <span>TeacherAssignment determines which TeacherFlags, DailyConcepts, and Students are visible to a Teacher</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set and update WhatsApp notification toggle per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set and update push notification type toggles per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set TimedTest question count and duration per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin actions are scoped to their own CoachingCenter; cross-center access is rejected</span></li>
+  <li><input type="checkbox"> <span>ExplanationSession LLM calls mark the NCERT context prefix with the Anthropic prompt caching header</span></li>
+  <li><input type="checkbox"> <span>Cache hit rate (cached input tokens vs. total input tokens) is logged per session via the existing LLM token usage logging (issue #29)</span></li>
 </ul>
   </div>
 
   <div class="section">
     <h2>Blocked by</h2>
     <ul class="blocker-list">
-  <li><span class="blocker-badge" style="background:#4f46e5">#3</span><a href="03-authentication-identity.html">Authentication &amp; identity</a> — Authentication &amp; identity</li>
-  <li><span class="blocker-badge" style="background:#4f46e5">#4</span><a href="04-curriculum-structure.html">Curriculum structure</a> — Curriculum structure</li>
+  <li><span class="blocker-badge" style="background:#059669">#8</span><a href="08-explanation-session-backend.html">ExplanationSession backend</a> — ExplanationSession backend</li>
+  <li><span class="blocker-badge" style="background:#7c3aed">#29</span><a href="29-llm-token-usage-logging.html">LLM token usage logging</a> — LLM token usage logging</li>
 </ul>
   </div>
 
   <div class="nav-row">
-    <a class="nav-btn" href="04-curriculum-structure.html">&#8592; Curriculum structure</a>
+    <a class="nav-btn" href="35-ragas-ci-gate.html">&#8592; RAGAS CI gate</a>
     <a class="nav-btn" href="index.html">&#8617; All issues</a>
-    <a class="nav-btn" href="06-ncert-corpus-ingestion-cli.html">NCERTCorpus Ingestion CLI &#8594;</a>
+    <a class="nav-btn" href="37-ragservice-retrieval-result-caching.html">RAGService retrieval result caching &#8594;</a>
   </div>
 
 </div>

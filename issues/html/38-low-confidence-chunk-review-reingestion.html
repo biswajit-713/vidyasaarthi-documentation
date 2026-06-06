@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>#5 CoachingCenter, Enrollment &amp; TeacherAssignment — Vidyasaarthi</title>
+  <title>#38 Low-confidence chunk review and re-ingestion — Vidyasaarthi</title>
   <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -246,54 +246,43 @@ a:hover { text-decoration: underline; }
 <div class="topbar">
   <a href="index.html">Vidyasaarthi Issues</a>
   <span class="sep">›</span>
-  <span class="current">#5 CoachingCenter, Enrollment &amp; TeacherAssignment</span>
+  <span class="current">#38 Low-confidence chunk review and re-ingestion</span>
 </div>
 
 <div class="container">
 
   <div class="issue-header">
-    <div class="issue-id" style="background:#4f46e5">#5 · Foundation</div>
-    <h1>CoachingCenter, Enrollment &amp; TeacherAssignment</h1>
+    <div class="issue-id" style="background:#0891b2">#38 · AI Content Infrastructure</div>
+    <h1>Low-confidence chunk review and re-ingestion</h1>
   </div>
 
   <div class="section">
     <h2>What to build</h2>
-    <p>Implement the organizational structure of the platform. PlatformAdmin creates CoachingCenters. CenterAdmin enrolls Students into specific Subjects at their CoachingCenter. CenterAdmin creates TeacherAssignments (Teacher → Subject + Class at a CoachingCenter).</p>
-<p>Also includes CoachingCenter-level configuration toggles:</p>
-<ul>
-  <li>WhatsApp notifications on/off</li>
-  <li>Push notification types on/off (DailyConcept posted, TeacherFlag resolved, StudyNote shared)</li>
-  <li>TimedTest configuration (question count, duration)</li>
-</ul>
+    <p>A companion ingestion command that takes a human-reviewed version of the skipped-chunks report (produced by the main ingestion CLI, issue #6) and ingests the reviewed chunks into pgvector and bm25s.</p>
+<p>The engineering team reviews the skipped-chunks JSONL, corrects <code>chunk_type</code> and <code>content</code> as needed, then runs this command to add the reviewed chunks to the existing indexes.</p>
   </div>
 
   <div class="section">
     <h2>Acceptance criteria</h2>
     <ul class="checklist">
-  <li><input type="checkbox"> <span>PlatformAdmin can create a CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can enroll a Student into one or more Subjects at their CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can create a TeacherAssignment mapping a Teacher to a Subject + Class</span></li>
-  <li><input type="checkbox"> <span>A Student's enrolled Subjects are retrievable from their profile</span></li>
-  <li><input type="checkbox"> <span>TeacherAssignment determines which TeacherFlags, DailyConcepts, and Students are visible to a Teacher</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set and update WhatsApp notification toggle per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set and update push notification type toggles per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin can set TimedTest question count and duration per CoachingCenter</span></li>
-  <li><input type="checkbox"> <span>CenterAdmin actions are scoped to their own CoachingCenter; cross-center access is rejected</span></li>
+  <li><input type="checkbox"> <span>CLI command accepts <code>--reviewed-chunks</code> (JSONL file in the same schema as the skipped-chunks report, with corrected <code>chunk_type</code> and <code>content</code>) and <code>--bm25s-index-path</code></span></li>
+  <li><input type="checkbox"> <span>Reviewed chunks are embedded with <code>bge-large-en-v1.5</code> and upserted into pgvector</span></li>
+  <li><input type="checkbox"> <span>bm25s index is rebuilt to include the reviewed chunks alongside all previously indexed chunks</span></li>
+  <li><input type="checkbox"> <span>Running the command twice is idempotent: vectors are upserted by <code>chunk_id</code></span></li>
 </ul>
   </div>
 
   <div class="section">
     <h2>Blocked by</h2>
     <ul class="blocker-list">
-  <li><span class="blocker-badge" style="background:#4f46e5">#3</span><a href="03-authentication-identity.html">Authentication &amp; identity</a> — Authentication &amp; identity</li>
-  <li><span class="blocker-badge" style="background:#4f46e5">#4</span><a href="04-curriculum-structure.html">Curriculum structure</a> — Curriculum structure</li>
+  <li><span class="blocker-badge" style="background:#0891b2">#6</span><a href="06-ncert-corpus-ingestion-cli.html">NCERTCorpus Ingestion CLI</a> — NCERTCorpus ingestion CLI</li>
 </ul>
   </div>
 
   <div class="nav-row">
-    <a class="nav-btn" href="04-curriculum-structure.html">&#8592; Curriculum structure</a>
+    <a class="nav-btn" href="32-ragservice-hybrid-retrieval-pipeline.html">&#8592; RAGService — hybrid retrieval pipeline</a>
     <a class="nav-btn" href="index.html">&#8617; All issues</a>
-    <a class="nav-btn" href="06-ncert-corpus-ingestion-cli.html">NCERTCorpus Ingestion CLI &#8594;</a>
+    <a class="nav-btn" href="07-question-bank-generation-sampler.html">QuestionBank generation CLI + QuestionBankSampler &#8594;</a>
   </div>
 
 </div>

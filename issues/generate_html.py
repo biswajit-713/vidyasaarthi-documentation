@@ -15,7 +15,9 @@ ISSUES = [
     ("3",  "03-authentication-identity",                            "Authentication & identity",                        "Foundation"),
     ("4",  "04-curriculum-structure",                               "Curriculum structure",                             "Foundation"),
     ("5",  "05-coaching-center-enrollment-teacher-assignment",      "CoachingCenter, Enrollment & TeacherAssignment",   "Foundation"),
-    ("6",  "06-ncert-corpus-ingestion-rag-service",                 "NCERTCorpus ingestion CLI + RAGService",           "AI Content Infrastructure"),
+    ("6",  "06-ncert-corpus-ingestion-cli",                          "NCERTCorpus Ingestion CLI",                        "AI Content Infrastructure"),
+    ("32", "32-ragservice-hybrid-retrieval-pipeline",               "RAGService — hybrid retrieval pipeline",            "AI Content Infrastructure"),
+    ("38", "38-low-confidence-chunk-review-reingestion",            "Low-confidence chunk review and re-ingestion",      "AI Content Infrastructure"),
     ("7",  "07-question-bank-generation-sampler",                   "QuestionBank generation CLI + QuestionBankSampler","AI Content Infrastructure"),
     ("8",  "08-explanation-session-backend",                        "ExplanationSession backend",                       "Core Learning Backend"),
     ("9",  "09-teacher-flag-notification-dispatcher",               "TeacherFlag + NotificationDispatcher",             "Core Learning Backend"),
@@ -40,6 +42,11 @@ ISSUES = [
     ("28", "28-teacher-portal-center-admin-configuration-ui",       "TeacherPortal — CenterAdmin configuration",        "Teacher Portal"),
     ("29", "29-llm-token-usage-logging",                            "LLM token usage logging",                          "Observability"),
     ("30", "30-student-activity-event-log",                         "Student activity event log",                       "Observability"),
+    ("33", "33-ragas-context-retrieval-evaluation",                 "RAGAS — Context Precision and Context Recall",      "Quality & Optimisation"),
+    ("34", "34-ragas-answer-relevancy-faithfulness",                "RAGAS — Answer Relevancy and Faithfulness",         "Quality & Optimisation"),
+    ("35", "35-ragas-ci-gate",                                      "RAGAS CI gate",                                    "Quality & Optimisation"),
+    ("36", "36-explanation-session-prompt-caching",                 "Anthropic prompt caching for ExplanationSession",  "Quality & Optimisation"),
+    ("37", "37-ragservice-retrieval-result-caching",                "RAGService retrieval result caching",               "Quality & Optimisation"),
 ]
 
 # Map issue id → (filename_stem, short_title)
@@ -52,6 +59,7 @@ CATEGORY_ORDER = [
     "Observability",
     "Student App",
     "Teacher Portal",
+    "Quality & Optimisation",
 ]
 
 CATEGORY_COLORS = {
@@ -61,6 +69,7 @@ CATEGORY_COLORS = {
     "Observability":            "#7c3aed",
     "Student App":              "#d97706",
     "Teacher Portal":           "#dc2626",
+    "Quality & Optimisation":   "#0f766e",
 }
 
 CSS = """
@@ -337,7 +346,14 @@ def render_body_text(text):
         line = lines[i]
         stripped = line.strip()
 
-        if stripped.startswith("- ") or stripped.startswith("* "):
+        if stripped.startswith("#"):
+            # Sub-heading — render as bold label and advance
+            heading_text = stripped.lstrip("#").strip()
+            html_parts.append(f"<p><strong>{html_escape(heading_text)}</strong></p>")
+            i += 1
+            continue
+
+        elif stripped.startswith("- ") or stripped.startswith("* "):
             # Collect list items
             items = []
             while i < len(lines) and (lines[i].strip().startswith("- ") or lines[i].strip().startswith("* ")):
