@@ -20,4 +20,3 @@ Alongside the script, implement `QuestionBankSampler` as a deep module. The ques
 ## Blocked by
 
 - #32 RAGService hybrid retrieval pipeline
-- #29 LLM token usage logging

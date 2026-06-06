@@ -21,4 +21,5 @@ Implement ScheduledTest creation and results viewing in the TeacherPortal.
 ## Blocked by
 
 - #24 TeacherPortal scaffold + auth
+- #13 ScheduledTest authoring & window management
 - #14 ScheduledTestGatekeeper

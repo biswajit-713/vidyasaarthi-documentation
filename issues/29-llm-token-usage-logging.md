@@ -38,4 +38,5 @@ No UI in v1. Both endpoints are intended for direct API access or export.
 
 ## Blocked by
 
-- #1 Local dev environment
+- #8 ExplanationSession backend
+- #12 DailyConcept + RevisionSession backend

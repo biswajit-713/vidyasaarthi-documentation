@@ -30,5 +30,3 @@ All LLM calls use the capable-tier model via LiteLLM. All prompts prepend NCERTC
 
 - #5 CoachingCenter, Enrollment & TeacherAssignment
 - #32 RAGService hybrid retrieval pipeline
-- #29 LLM token usage logging
-- #30 Student activity event log

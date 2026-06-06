@@ -27,7 +27,7 @@ Event types and their `metadata` fields:
 
 `ActivityEventLogger` is a thin service with a single `record(student_id, event_type, topic_id, chapter_id, metadata)` method. It is injected as a dependency into each session orchestrator and endpoint handler. Writes are fire-and-forget: the caller does not await the result, so a slow or failed write does not block the primary response path.
 
-The event log is the data source for the inactivity background job in issue #15 — that job should query `student_activity_event` for students with no event in the past N days rather than maintaining separate state.
+The event log is the data source for the inactivity background job in issue #17 — that job should query `student_activity_event` for students with no event in the past N days rather than maintaining separate state.
 
 Three read endpoints, accessible to CenterAdmin (scoped to their CoachingCenter) and PlatformAdmin:
 
@@ -57,4 +57,8 @@ No UI in v1. Endpoints are for direct API access by operators.
 
 ## Blocked by
 
-- #1 Local dev environment
+- #8 ExplanationSession backend
+- #11 ProficiencyEngine + TimedTest backend
+- #12 DailyConcept + RevisionSession backend
+- #13 ScheduledTest authoring & window management
+- #14 ScheduledTestGatekeeper

@@ -116,7 +116,7 @@ These establish the app shell. All subsequent frontend issues slot feature scree
 | #20 | app | TimedTest UI | #11, #18 |
 | #21 | app | ScheduledTest UI | #14, #18 |
 | #22 | app | DailyConcept + RevisionSession UI | #12, #18 |
-| #23 | app | PerformanceReport + StudyNote UI | #15, #16, #18 |
+| #23 | app | PerformanceReport + StudyNote UI | #15, #16, #17, #18 |
 
 ### Phase 6 — Teacher Portal features
 
