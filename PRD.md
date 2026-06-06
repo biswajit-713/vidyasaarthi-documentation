@@ -135,7 +135,7 @@ The platform launches at 20–30 users and is designed to scale to 100 users in 
 
 **RAGService**
 Interface: `retrieve(query: str, class_level: int, subject: str, top_k: int) → List[Passage]`
-Pure retrieval against the NCERTCorpus stored in pgvector (pgvector extension inside the same Postgres instance, HNSW index). Accepts no LLM dependency — retrieval is fully separable from generation. All ExplanationSession and RevisionSession prompts are constructed by prepending retrieved Passages to the LLM call. Testable in isolation by seeding fixture vectors and asserting top-k recall. `class_level` and `subject` are used as metadata filters to scope retrieval to the Student's curriculum.
+Hybrid retrieval pipeline: (1) BM25 keyword search (bm25s, top-50) and semantic ANN search (pgvector + bge-large-en-v1.5 embeddings, top-50) run in parallel; (2) Reciprocal Rank Fusion merges both lists to top-20; (3) cross-encoder reranking (bge-reranker-base, plain PyTorch) reduces to top-k. No LLM dependency — retrieval is fully separable from generation. All ExplanationSession and RevisionSession prompts are constructed by prepending retrieved Passages to the LLM call. `class_level` and `subject` are used as metadata filters on the pgvector search to scope retrieval to the Student's curriculum. Stage cardinalities (BM25_TOP_N, SEMANTIC_TOP_N, RRF_TOP_N) are configurable constants.
 
 **ProficiencyEngine**
 Interface: `recalculate(current_level: ProficiencyLevel, chosen_difficulty: ProficiencyLevel, score_pct: float) → ProficiencyLevel`
@@ -177,7 +177,7 @@ Pure logic layer enforcing: (1) no new attempt can be started after the availabi
 - StudyNote metadata (uploader, assignment scope, optional topic/chapter tag, GCS object path) stored in Postgres. Binary stored in GCS (max 20 MB).
 - TeacherFlag stores: student_id, topic_id, teacher_id, raised_at, resolved_at (nullable), resolution_note (nullable), is_resolved (boolean).
 - DailyConcept stores: teacher_id, posted_date, list of topic_ids (up to 5). Unique constraint on (teacher_assignment_id, posted_date).
-- NCERTCorpus vectors stored in pgvector with metadata: class_level, subject, chapter, topic, source_page. HNSW index. Estimated 10,000–30,000 vectors.
+- NCERTCorpus chunks stored in pgvector with metadata: chunk_id, chunk_type, class_level, subject, chapter, section_id, heading, page_number. HNSW index. Estimated 10,000–30,000 vectors. A bm25s keyword index is built from the same chunks at ingestion time and serialized to disk for RAGService to load at startup.
 
 ### API Contracts (key endpoints)
 
@@ -206,6 +206,8 @@ Pure logic layer enforcing: (1) no new attempt can be started after the availabi
 - **ADR 0008** — MiniTest defaults to QuestionBank. Abstracted behind a configurable interface for future LLM swap.
 - **ADR 0009** — Single e2-small VM on GCP Mumbai for DPDP data residency. FastAPI in Docker. Postgres native on VM. Daily pg_dump to GCS. Embedding and QuestionBank generation run as offline jobs on separate infrastructure.
 - **ADR 0010** — React+Vite SPA built to static files, served by Nginx on the same VM as the FastAPI backend.
+- **ADR 0011** — bm25s (Python library) used as the BM25 backend for keyword retrieval. Postgres FTS (tsvector) rejected due to non-standard scoring; Tantivy rejected due to Rust build dependency and lightly-maintained Python bindings.
+- **ADR 0012** — Reranker (bge-reranker-base) runs as plain PyTorch on CPU at v1 launch. ONNX INT8 quantization and T4 GPU are documented upgrade paths triggered by profiling data.
 
 ---
 
@@ -223,7 +225,7 @@ A good test verifies external, observable behavior — what the module returns o
 
 **Integration tests (with database)**
 
-- **RAGService**: Seed fixture vectors into a pgvector test instance; assert top-k recall and metadata filter correctness (class_level and subject scoping).
+- **RAGService**: Seed fixture vectors into a pgvector test instance and a fixture bm25s index; assert top-k recall, metadata filter correctness (class_level and subject scoping), and RRF output cardinality.
 - **QuestionBankSampler**: Fixture QuestionBank rows; assert sampling returns correct count, correct ProficiencyLevel, correct Topic; assert behavior when bank has fewer questions than requested count.
 - **TimedTest submission pipeline**: End-to-end from submit through ProficiencyEngine recalculation to ProficiencyLevel row update.
 - **ScheduledTest submission pipeline**: End-to-end through ScheduledTestGatekeeper to attempt record; assert window-closed rejection path writes no record.
