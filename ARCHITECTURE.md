@@ -79,4 +79,6 @@ flowchart TB
 | Teacher notifications | WhatsApp Business API | Higher open rate than SMS in India; disableable per-center |
 | Push notifications | Firebase FCM | 4 types: DailyConcept, TeacherFlag resolved, StudyNote shared, inactivity reminder |
 | Object storage | GCS | StudyNote PDFs (≤20MB) + daily DB backups |
+| BM25 keyword index | bm25s (Python library) | True BM25 scoring; Postgres FTS rejected (non-standard scoring); Tantivy rejected (Rust build dependency, stale Python bindings) |
+| Reranker | bge-reranker-base, plain PyTorch on CPU | ~400–800ms for top-20 on e2-small; ONNX INT8 and T4 GPU are documented upgrade paths |
 ```

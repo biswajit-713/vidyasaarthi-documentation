@@ -71,7 +71,7 @@ Maximum 512 tokens per chunk. If a merged chunk exceeds 512 tokens, split at the
 - 0.85: body narrative paragraphs
 - 0.50–0.79: infographic titles, unrecognized box headers
 
-Chunks with `confidence ≥ 0.8` are indexed in pgvector and bm25s. Chunks with `confidence < 0.8` are excluded from both indexes and written to a skipped-chunks report (JSONL) for human review (see issue #37).
+Chunks with `confidence ≥ 0.8` are indexed in pgvector and bm25s. Chunks with `confidence < 0.8` are excluded from both indexes and written to a skipped-chunks report (JSONL) for human review (see issue #38).
 
 ### Table rules
 
