@@ -16,7 +16,7 @@ TeacherFlag routing is scoped to the TeacherAssignment — only the Teacher assi
 - [ ] In-portal notification record is created for the Teacher on every TeacherFlag (regardless of toggles)
 - [ ] WhatsApp nudge is sent only when the CoachingCenter has WhatsApp enabled
 - [ ] TeacherFlag is routed to the correct Teacher via TeacherAssignment (Subject + Class scoping)
-- [ ] `PATCH /teacher/flags/{flag_id}/resolve` marks flag resolved with optional note; sets resolved_at timestamp
+- [ ] `PUT /teacher/flags/{flag_id}/resolve` marks flag resolved with optional note; sets resolved_at timestamp
 - [ ] `GET /teacher/flags` returns only flags scoped to the authenticated Teacher's TeacherAssignment
 - [ ] NotificationDispatcher transports are injected as dependencies; unit tests assert correct routing and toggle suppression with mocked transports
 - [ ] WhatsApp and FCM clients are stubbed/mocked in the dev environment

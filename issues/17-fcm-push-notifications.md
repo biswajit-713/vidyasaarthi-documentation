@@ -19,7 +19,7 @@ A Student settings endpoint allows toggling the inactivity reminder preference. 
 ## Acceptance criteria
 
 - [ ] Student app registers FCM device token with the backend on login; token is stored per Student
-- [ ] `PATCH /student/settings/notifications` allows the Student to toggle the inactivity reminder on or off
+- [ ] `PUT /student/settings/notifications` allows the Student to toggle the inactivity reminder on or off
 - [ ] All four notification types are dispatched via the NotificationDispatcher FCM transport
 - [ ] CenterAdmin toggles suppress FCM dispatch for types 1–3 when off
 - [ ] Student toggle suppresses FCM dispatch for type 4 when off

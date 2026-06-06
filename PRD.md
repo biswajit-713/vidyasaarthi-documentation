@@ -192,7 +192,7 @@ Pure logic layer enforcing: (1) no new attempt can be started after the availabi
 - `POST /teacher/daily-concept` — posts DailyConcepts (idempotent per day per teacher_assignment_id).
 - `POST /teacher/study-notes` — multipart upload; stores to GCS; triggers NotificationDispatcher.
 - `GET /teacher/flags` — returns TeacherFlags scoped to caller's TeacherAssignment.
-- `PATCH /teacher/flags/{flag_id}/resolve` — marks TeacherFlag resolved with optional note.
+- `PUT /teacher/flags/{flag_id}/resolve` — marks TeacherFlag resolved with optional note.
 
 ### Architectural Decisions
 
