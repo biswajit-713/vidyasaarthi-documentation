@@ -34,6 +34,7 @@ The aggregated signals are passed to the capable-tier LLM to produce a narrative
 
 ## Blocked by
 
+- #8 ExplanationSession backend
+- #9 TeacherFlag + NotificationDispatcher
 - #11 ProficiencyEngine + TimedTest backend
 - #14 ScheduledTestGatekeeper
-- #29 LLM token usage logging

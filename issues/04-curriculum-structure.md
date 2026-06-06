@@ -16,4 +16,4 @@ No write API is needed in v1 — the curriculum is static and managed via seed s
 
 ## Blocked by
 
-- #1 Local dev environment
+- #3 Authentication & identity

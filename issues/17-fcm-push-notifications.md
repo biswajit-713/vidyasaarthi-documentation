@@ -30,4 +30,6 @@ A Student settings endpoint allows toggling the inactivity reminder preference. 
 ## Blocked by
 
 - #9 TeacherFlag + NotificationDispatcher
+- #12 DailyConcept + RevisionSession backend
+- #15 StudyNote backend
 - #30 Student activity event log

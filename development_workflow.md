@@ -95,9 +95,9 @@ Once #3 and #4 are done, the frontend scaffold issues (#18, #24) can begin in pa
 | #12 | backend | DailyConcept + RevisionSession backend | #8, #32 |
 | #13 | backend | ScheduledTest authoring & window management | #5 |
 | #14 | backend | ScheduledTestGatekeeper | #13 |
-| #15 | backend | StudyNote backend | #5 |
-| #16 | backend | PerformanceReport backend | #8, #9, #11 |
-| #17 | backend | FCM push notifications | #9, #12, #15 |
+| #15 | backend | StudyNote backend | #5, #9 |
+| #16 | backend | PerformanceReport backend | #8, #9, #11, #14 |
+| #17 | backend | FCM push notifications | #9, #12, #15, #30 |
 
 ### Phase 4 — Frontend scaffolds
 

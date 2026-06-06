@@ -22,4 +22,3 @@ Teachers can view full results — submission status and per-student, per-questi
 ## Blocked by
 
 - #5 CoachingCenter, Enrollment & TeacherAssignment
-- #7 QuestionBank generation CLI + QuestionBankSampler

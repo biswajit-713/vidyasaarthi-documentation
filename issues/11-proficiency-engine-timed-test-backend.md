@@ -30,4 +30,3 @@ TimedTest flow: Student starts test → questions sampled from QuestionBank at c
 
 - #5 CoachingCenter, Enrollment & TeacherAssignment
 - #7 QuestionBank generation CLI + QuestionBankSampler
-- #30 Student activity event log
