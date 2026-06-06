@@ -35,10 +35,17 @@ Because there are three code repos, a single product feature is often split acro
 | TeacherFlag + WhatsApp nudge | #9 | — | #27 |
 | FCM push notifications | #17 | (consumed by app) | — |
 | CoachingCenter / Enrollment | #5 | — | #28 |
-| NCERT corpus + RAG | #6 | — | — |
+| NCERTCorpus ingestion | #6 | — | — |
+| RAGService (hybrid retrieval) | #32 | — | — |
+| Low-confidence chunk review | #38 | — | — |
 | Question bank | #7 | — | — |
 | LLM token logging | #29 | — | — |
 | Student activity log | #30 | — | — |
+| RAGAS evaluation (retrieval) | #33 | — | — |
+| RAGAS evaluation (answers) | #34 | — | — |
+| RAGAS CI gate | #35 | — | — |
+| Prompt caching (ExplanationSession) | #36 | — | — |
+| RAGService retrieval caching | #37 | — | — |
 
 ---
 
@@ -70,20 +77,22 @@ Start here. Nothing else can run without #1.
 | #3 | backend | Authentication & identity | #1 |
 | #4 | backend | Curriculum structure | #3 |
 | #5 | backend | CoachingCenter, Enrollment & TeacherAssignment | #3, #4 |
-| #6 | backend | NCERTCorpus ingestion CLI + RAGService | #1 |
-| #7 | backend | QuestionBank generation CLI + QuestionBankSampler | #6 |
+| #6 | backend | NCERTCorpus Ingestion CLI | #1 |
+| #32 | backend | RAGService — hybrid retrieval pipeline | #6 |
+| #38 | backend | Low-confidence chunk review and re-ingestion | #6 |
+| #7 | backend | QuestionBank generation CLI + QuestionBankSampler | #32 |
 
-Once #3 and #4 are done, the frontend scaffold issues (#18, #24) can begin in parallel with the rest of Phase 2.
+Once #3 and #4 are done, the frontend scaffold issues (#18, #24) can begin in parallel with the rest of Phase 2. #32 and #38 can be worked in parallel once #6 is done.
 
 ### Phase 3 — Core feature services (backend)
 
 | Issue | Repo | Title | Blocked by |
 |---|---|---|---|
-| #8 | backend | ExplanationSession backend | #5, #6 |
+| #8 | backend | ExplanationSession backend | #5, #32 |
 | #9 | backend | TeacherFlag + NotificationDispatcher | #8 |
-| #10 | backend | MiniTest backend | #7, #8 |
+| #10 | backend | MiniTest backend | #7, #8, #32 |
 | #11 | backend | ProficiencyEngine + TimedTest backend | #5, #7 |
-| #12 | backend | DailyConcept + RevisionSession backend | #5 |
+| #12 | backend | DailyConcept + RevisionSession backend | #8, #32 |
 | #13 | backend | ScheduledTest authoring & window management | #5 |
 | #14 | backend | ScheduledTestGatekeeper | #13 |
 | #15 | backend | StudyNote backend | #5 |
@@ -126,6 +135,18 @@ These establish the app shell. All subsequent frontend issues slot feature scree
 | #30 | backend | Student activity event log | #8, #11, #12, #13, #14 |
 
 Can be developed in parallel with Phases 5 and 6.
+
+### Phase 8 — Quality and optimisation
+
+| Issue | Repo | Title | Blocked by |
+|---|---|---|---|
+| #33 | backend | RAGAS evaluation — Context Precision and Context Recall | #6, #32 |
+| #34 | backend | RAGAS evaluation — Answer Relevancy and Faithfulness | #8, #33 |
+| #35 | backend | RAGAS CI gate | #33 |
+| #36 | backend | Anthropic prompt caching for ExplanationSession | #8, #29 |
+| #37 | backend | RAGService retrieval result caching | #32 |
+
+These are post-launch quality gates and performance optimisations. #33 and #37 can be started as soon as #32 is merged — they do not depend on user-facing features being complete.
 
 ---
 
