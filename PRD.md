@@ -134,8 +134,8 @@ The platform launches at 20–30 users and is designed to scale to 100 users in 
 ### Deep Modules
 
 **RAGService**
-Interface: `retrieve(query: str, class_level: int, subject: str, top_k: int) → List[Passage]`
-Hybrid retrieval pipeline: (1) BM25 keyword search (bm25s, top-50) and semantic ANN search (pgvector + bge-large-en-v1.5 embeddings, top-50) run in parallel; (2) Reciprocal Rank Fusion merges both lists to top-20; (3) cross-encoder reranking (bge-reranker-base, plain PyTorch) reduces to top-k. No LLM dependency — retrieval is fully separable from generation. All ExplanationSession and RevisionSession prompts are constructed by prepending retrieved Passages to the LLM call. `class_level` and `subject` are used as metadata filters on the pgvector search to scope retrieval to the Student's curriculum. Stage cardinalities (BM25_TOP_N, SEMANTIC_TOP_N, RRF_TOP_N) are configurable constants.
+Interface: `retrieve(query: str, subject_id: int, chapter_id: int | None = None, top_k: int) → List[Passage]`
+Hybrid retrieval pipeline: (1) BM25 keyword search (bm25s, top-50) and semantic ANN search (pgvector + bge-large-en-v1.5 embeddings, top-50) run sequentially; (2) Reciprocal Rank Fusion merges both lists to top-20; (3) cross-encoder reranking (bge-reranker-base, plain PyTorch) reduces to top-k. No LLM dependency — retrieval is fully separable from generation. All ExplanationSession and RevisionSession prompts are constructed by prepending retrieved Passages to the LLM call. `subject_id` is always applied as a filter on the pgvector search. `chapter_id` is an optional filter: when provided and `filter_by_chapter=True` (the default), retrieval is scoped to that chapter — ExplanationSession and RevisionSession always pass it; the QuestionBank CLI passes `None`. `filter_by_chapter` is a constructor parameter (default True) wired from config; setting it to False on a second RAGService instance enables A/B comparison of retrieval quality without client changes or service restarts. Stage cardinalities (BM25_TOP_N, SEMANTIC_TOP_N, RRF_TOP_N) are configurable constants.
 
 **ProficiencyEngine**
 Interface: `recalculate(current_level: ProficiencyLevel, chosen_difficulty: ProficiencyLevel, score_pct: float) → ProficiencyLevel`
@@ -177,7 +177,7 @@ Pure logic layer enforcing: (1) no new attempt can be started after the availabi
 - StudyNote metadata (uploader, assignment scope, optional topic/chapter tag, GCS object path) stored in Postgres. Binary stored in GCS (max 20 MB).
 - TeacherFlag stores: student_id, topic_id, teacher_id, raised_at, resolved_at (nullable), resolution_note (nullable), is_resolved (boolean).
 - DailyConcept stores: teacher_id, posted_date, list of topic_ids (up to 5). Unique constraint on (teacher_assignment_id, posted_date).
-- NCERTCorpus chunks stored in pgvector with metadata: chunk_id, chunk_type, class_level, subject, chapter, section_id, heading, page_number. HNSW index. Estimated 10,000–30,000 vectors. A bm25s keyword index is built from the same chunks at ingestion time and serialized to disk for RAGService to load at startup.
+- NCERTCorpus chunks stored in pgvector with metadata: chunk_id, chunk_type, class_level, subject, chapter, section_id, heading, page_number, subject_id (FK → subjects.id), chapter_id (FK → chapters.id). HNSW index. Estimated 10,000–30,000 vectors. `subject_id` and `chapter_id` are the integer FK columns used by RAGService for filtering; the text `subject` and `chapter` columns are retained for display metadata in RetrievedPassage. A bm25s keyword index is built from the same chunks at ingestion time and serialized to disk for RAGService to load at startup.
 
 ### API Contracts (key endpoints)
 
@@ -225,7 +225,7 @@ A good test verifies external, observable behavior — what the module returns o
 
 **Integration tests (with database)**
 
-- **RAGService**: Seed fixture vectors into a pgvector test instance and a fixture bm25s index; assert top-k recall, metadata filter correctness (class_level and subject scoping), and RRF output cardinality.
+- **RAGService**: Seed fixture vectors into a pgvector test instance and a fixture bm25s index; assert top-k recall, subject_id filter correctness, chapter_id filter correctness (enabled vs disabled via filter_by_chapter), and RRF output cardinality.
 - **QuestionBankSampler**: Fixture QuestionBank rows; assert sampling returns correct count, correct ProficiencyLevel, correct Topic; assert behavior when bank has fewer questions than requested count.
 - **TimedTest submission pipeline**: End-to-end from submit through ProficiencyEngine recalculation to ProficiencyLevel row update.
 - **ScheduledTest submission pipeline**: End-to-end through ScheduledTestGatekeeper to attempt record; assert window-closed rejection path writes no record.
