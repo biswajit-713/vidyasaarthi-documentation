@@ -154,7 +154,7 @@ Interface: `sample(topic_id: UUID, proficiency_level: ProficiencyLevel, count: i
 Queries the QuestionBank by Topic and ProficiencyLevel, samples `count` questions randomly. The QuestionBank is populated offline by a standalone CLI script pre-launch; no admin UI exists in v1. The MiniTest question source is abstracted behind a configurable interface so that a future LLM-backed question generator can be substituted without changing callers.
 
 **ExplanationSessionOrchestrator**
-Owns the Pass state machine: Pass1 (FirstPrinciples) → Pass2 (Elaboration) → Pass3 (Socratic) → TeacherFlag. On each student utterance, evaluates whether the student has declared understanding or non-understanding and transitions accordingly. Streams LLM responses back to the Student app via FastAPI SSE. On exhaustion of Pass3 without understanding, calls NotificationDispatcher to raise a TeacherFlag and records the outcome. No mid-session state is persisted to the database — only the final outcome (understood or TeacherFlag) is written on session close. Uses the capable-tier LLM (via LiteLLM library) for all passes.
+Owns the Pass state machine: Pass1 (FirstPrinciples) → Pass2 (Elaboration) → Pass3 (Socratic) → TeacherFlag. On each student utterance, evaluates whether the student has declared understanding or non-understanding and transitions accordingly. Streams LLM responses back to the Student app via FastAPI SSE. On exhaustion of Pass3 without understanding, immediately calls NotificationDispatcher to raise a TeacherFlag — this happens during the advance-pass call the moment the session becomes terminal, before the done SSE event is emitted to the client. This ensures the transparent message ("We've let your teacher know") is truthful when the Student sees it. The session outcome (teacher_flagged) is written to the database on the subsequent /close call. No mid-session state is persisted to the database — only the final outcome (understood or TeacherFlag) is written on session close. Uses the capable-tier LLM (via LiteLLM library) for all passes.
 
 **PerformanceNarrativeGenerator**
 Aggregates four signals per Student: (1) TimedTest scores by Topic, (2) ExplanationSession pass counts by Topic, (3) TeacherFlags raised by Topic, (4) activity frequency over a trailing period. Signal aggregation is a pure function and testable without any LLM. The aggregated signal object is passed to the capable-tier LLM to produce the narrative covering strong Topics, weak Topics, a revision nudge, and a study-consistency comment. Narrative may be cached with a short TTL at render time.
@@ -183,7 +183,8 @@ Pure logic layer enforcing: (1) no new attempt can be started after the availabi
 
 - `POST /sessions/explanation` — initiates ExplanationSession, returns session_id and first Pass type.
 - `POST /sessions/explanation/{session_id}/message` — sends student utterance; returns SSE stream of AI response and updated pass state.
-- `POST /sessions/explanation/{session_id}/close` — records outcome (understood | teacher_flagged).
+- `POST /sessions/explanation/{session_id}/advance-pass` — advances to the next Pass; on exhaustion of Pass3, raises TeacherFlag and dispatches notifications before emitting the terminal done event.
+- `POST /sessions/explanation/{session_id}/close` — records outcome (understood | teacher_flagged); does not trigger flag creation.
 - `POST /tests/timed/start` — samples questions via QuestionBankSampler, returns question list; no server state until submit.
 - `POST /tests/timed/submit` — validates at-least-one-answer rule; writes attempt; triggers ProficiencyEngine recalculation.
 - `POST /tests/scheduled/{test_id}/start` — checked by ScheduledTestGatekeeper; returns question list.
@@ -192,7 +193,7 @@ Pure logic layer enforcing: (1) no new attempt can be started after the availabi
 - `POST /teacher/daily-concept` — posts DailyConcepts (idempotent per day per teacher_assignment_id).
 - `POST /teacher/study-notes` — multipart upload; stores to GCS; triggers NotificationDispatcher.
 - `GET /teacher/flags` — returns TeacherFlags scoped to caller's TeacherAssignment.
-- `PUT /teacher/flags/{flag_id}/resolve` — marks TeacherFlag resolved with optional note.
+- `PATCH /teacher/flags/{flag_id}/resolve` — marks TeacherFlag resolved with optional note.
 
 ### Architectural Decisions
 
