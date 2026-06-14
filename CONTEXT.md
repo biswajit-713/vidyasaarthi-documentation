@@ -69,7 +69,7 @@ A hybrid view of a Student's learning activity with two sections. (1) AI learnin
 _Avoid_: Dashboard, report card, progress report, analytics
 
 **TeacherFlag**:
-A signal raised when a Student exhausts all three Passes without declaring understanding. The Student is shown a transparent message ("We've let your teacher know you need help with this topic") and the flag is visible in their profile. The Teacher receives an in-portal notification (permanent record) and a WhatsApp nudge. A Teacher can mark a flag as resolved with an optional note (e.g., "Explained in class"). WhatsApp delivery is toggled on/off by the CenterAdmin for the entire center.
+A signal raised immediately when a Student exhausts all three Passes without declaring understanding — triggered during the advance-pass call the moment the final Pass becomes terminal, before the done event reaches the client. This ensures the transparent message ("We've let your teacher know you need help with this topic") shown to the Student is truthful when they see it. The flag is visible in their profile. The Teacher receives an in-portal notification (permanent record) and a WhatsApp nudge. A Teacher can mark a flag as resolved with an optional note (e.g., "Explained in class"). WhatsApp delivery is toggled on/off by the CenterAdmin for the entire center.
 _Avoid_: Escalation, alert, notification
 
 **ProficiencyLevel**:
